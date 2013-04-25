@@ -1,7 +1,8 @@
+
 #!/usr/bin/env python
 
 class CTGA(object):
-    def __init(self):
+    def __init__(self):
         """TGA Header ; Field number according to the specefication"""
         self.DTGAColorMapSpec = None
         self.DTGAImageSpec    = None
@@ -54,3 +55,5 @@ class CTGA(object):
             "DTGAFooter"               : DTGAFooter
             }
    
+        def readHeader(self):
+            pass
