@@ -2,8 +2,12 @@
 #!/usr/bin/env python
 
 class CTGA(object):
-    def __init__(self):
+    def __init__(self, TGAfile):
         """TGA Header ; Field number according to the specefication"""
+
+        self.TGAfile = TGAfile
+
+
         self.DTGAColorMapSpec = None
         self.DTGAImageSpec    = None
         
@@ -48,12 +52,15 @@ class CTGA(object):
             }  
         
         self.DTGAFile = {
-            "DTGAHeader"               : DTGAHeader,
-            "DTGAImageAndColorMapData" : DTGAImageAndColorMapData,
-            "DTGADevArea"              : DTGADevArea,
-            "DTGAExtArea"              : DTGAExtArea,
-            "DTGAFooter"               : DTGAFooter
+            "DTGAHeader"               : self.DTGAHeader,
+            "DTGAImageAndColorMapData" : self.DTGAImageAndColorMapData,
+            "DTGADevArea"              : self.DTGADevArea,
+            "DTGAExtArea"              : self.DTGAExtArea,
+            "DTGAFooter"               : self.DTGAFooter
             }
    
-        def readHeader(self):
-            pass
+    def validate(TGAfile):
+        return True
+
+    def readHeader(self):
+        self.DTGAFile["DTGAHeader"]["IDLength"] = self.TGAfile.read(1)
