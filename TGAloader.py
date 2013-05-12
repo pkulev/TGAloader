@@ -1,5 +1,6 @@
 
 #!/usr/bin/env python
+import os
 
 class CTGA(object):
     def __init__(self, filename):
@@ -67,7 +68,7 @@ class CTGA(object):
     def validate(TGAfile):
         return True
 
-    def toInt(self, s):
+    def toInt(self, s): #DANGEROUS
         print type(s)
         print "lololo = " + s
         s = s[2:]
@@ -76,10 +77,9 @@ class CTGA(object):
     def readHeader(self):
         self.TGAfile.seek(0)
         self.DTGAHeader["IDLength"] = self.TGAfile.read(1)
-        print "lololo = " + str(self.DTGAHeader["IDLength"])
         self.DTGAHeader["ColorMapType"] = self.TGAfile.read(1)
         self.DTGAHeader["imageType"] = self.TGAfile.read(1)
-
+    
         self.DTGAColorMapSpec["firstEntryIndex"] = self.TGAfile.read(2)
         self.DTGAColorMapSpec["colorMapLength"] = self.toInt(self.TGAfile.read(2))
         self.DTGAColorMapSpec["colorMapEntrySize"] = self.TGAfile.read(1)
@@ -93,12 +93,23 @@ class CTGA(object):
 
     def printHeader(self):
         print self.DTGAHeader
-        print self.DTGAImageAndColorMapData
+        #print self.DTGAImageAndColorMapData
 
     def readImageAndColorMapData(self):
         self.DTGAImageAndColorMapData["imageID"] = self.TGAfile.read(self.DTGAHeader["IDLength"])
         self.DTGAImageAndColorMapData["colorMapData"] = self.TGAfile.read(self.DTGAColorMapSpec["colorMapData"])
 
     def readTGA(self):
-        self.readHeader()
-        self.readImageAndColorMapData()
+        #self.readHeader()
+        #self.readImageAndColorMapData()
+        self.readFooter(self.TGAfile)
+
+    def readFooter(self, TGAfile):
+        TGAfile.seek(-18, os.SEEK_END)
+        self.DTGAFooter["extOffset"] = TGAfile.read(16)
+        print self.DTGAFooter["extOffset"]
+        """self.DTGAFooter["devAreaOffset"] = self.TGAfile.read(4)
+        self.DTGAFooter["signature"] = self.TGAfile.read(16)
+        self.DTGAFooter["reservedChar"] = self.TGAfile.read(1)
+        self.DTGAFooter["terminator"] = self.TGAfile.read(1)
+        """
