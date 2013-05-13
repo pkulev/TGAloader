@@ -10,24 +10,24 @@ class CTGA(object):
         except IOError, e:
             print e
         else:
-            self.DTGAColorMapSpec = None
-            self.DTGAImageSpec    = None
+            self.TGAColorMapSpec = None
+            self.TGAImageSpec    = None
             
-            self.DTGAHeader = {
+            self.TGAHeader = {
                 "IDLength"     : None,                  #1 (1 byte)
                 "colorMapType" : None,                  #2 {0 - color map is not included, 1 - is included} (1 byte)
                 "imageType"    : None,                  #3 (1 byte)
-                "colorMapSpec" : self.DTGAColorMapSpec, #4 (5 bytes)
-                "imageSpec"    : self.DTGAImageSpec     #5 (10 bytes)
+                "colorMapSpec" : self.TGAColorMapSpec, #4 (5 bytes)
+                "imageSpec"    : self.TGAImageSpec     #5 (10 bytes)
                 }
             
-            self.DTGAColorMapSpec = {
+            self.TGAColorMapSpec = {
                 "firstEntryIndex"   : None, #4.1 (2 bytes)
                 "colorMapLength"    : None, #4.2 (2 bytes)
                 "colorMapEntrySize" : None #4.3 (1 byte)
                 }
             
-            self.DTGAImageSpec = {
+            self.TGAImageSpec = {
                 "xOrigin"         : None, #5.1 (2 bytes)
                 "yOrigin"         : None, #5.2 (2 bytes)
                 "imageWidth"      : None, #5.3 (2 bytes)
@@ -36,16 +36,17 @@ class CTGA(object):
                 "imageDescriptor" : None  #5.6 (1 byte)
                 }
             
-            self.DTGAImageAndColorMapData = {      
+            self.TGAImageAndColorMapData = {      
                 "imageID"      : None, #6 (IDLength bytes)
                 "colorMapData" : None, #7 (colorMapLength bytes)
                 "imageData"    : None  #8 
                 }
             
-            self.DTGADevArea = None
-            self.DTGAExtArea = None    #10 - 27 fields
-            
-            self.DTGAFooter = {  #(26 bytes)
+            self.TGADevArea = None
+            self.TGAExtArea = None    #10 - 27 fields
+
+            self.footerLength = 26
+            self.TGAFooter = {  #(26 bytes)
                 "extOffset"      : None, #28 (4 bytes)
                 "devAreaOffset"  : None, #29 (4 bytes)
                 "signature"      : None, #30 (16 bytes)
@@ -53,12 +54,12 @@ class CTGA(object):
                 "terminator"     : None  #32 (1 byte)
                 }  
         
-            self.DTGAFile = {
-                "DTGAHeader"               : self.DTGAHeader,
-                "DTGAImageAndColorMapData" : self.DTGAImageAndColorMapData,
-                "DTGADevArea"              : self.DTGADevArea,
-                "DTGAExtArea"              : self.DTGAExtArea,
-                "DTGAFooter"               : self.DTGAFooter
+            self.TGAFile = {
+                "TGAHeader"               : self.TGAHeader,
+                "TGAImageAndColorMapData" : self.TGAImageAndColorMapData,
+                "TGADevArea"              : self.TGADevArea,
+                "TGAExtArea"              : self.TGAExtArea,
+                "TGAFooter"               : self.TGAFooter
                 }
             
             self.readTGA()
@@ -68,36 +69,36 @@ class CTGA(object):
     def validate(TGAfile):
         return True
 
-    def toInt(self, s): #DANGEROUS
+    def toInt(self, s):
         print type(s)
         print "lololo = " + s
         s = s[2:]
-        return 2#int(s, 16)
+        return int(s, 16)
 
     def readHeader(self):
         self.TGAfile.seek(0)
-        self.DTGAHeader["IDLength"] = self.TGAfile.read(1)
-        self.DTGAHeader["ColorMapType"] = self.TGAfile.read(1)
-        self.DTGAHeader["imageType"] = self.TGAfile.read(1)
+        self.TGAHeader["IDLength"] = self.TGAfile.read(1)
+        self.TGAHeader["ColorMapType"] = self.TGAfile.read(1)
+        self.TGAHeader["imageType"] = self.TGAfile.read(1)
     
-        self.DTGAColorMapSpec["firstEntryIndex"] = self.TGAfile.read(2)
-        self.DTGAColorMapSpec["colorMapLength"] = self.toInt(self.TGAfile.read(2))
-        self.DTGAColorMapSpec["colorMapEntrySize"] = self.TGAfile.read(1)
+        self.TGAColorMapSpec["firstEntryIndex"] = self.TGAfile.read(2)
+        self.TGAColorMapSpec["colorMapLength"] = self.TGAfile.read(2)
+        self.TGAColorMapSpec["colorMapEntrySize"] = self.TGAfile.read(1)
 
-        self.DTGAImageSpec["xOrigin"] = self.TGAfile.read(2)
-        self.DTGAImageSpec["yOrigin"] = self.TGAfile.read(2)
-        self.DTGAImageSpec["imageWidth"] = self.TGAfile.read(2)
-        self.DTGAImageSpec["imageHeight"] = self.TGAfile.read(2)
-        self.DTGAImageSpec["pixelDepth"] = self.TGAfile.read(1)
-        self.DTGAImageSpec["imageDescriptor"] = self.TGAfile.read(1)
+        self.TGAImageSpec["xOrigin"] = self.TGAfile.read(2)
+        self.TGAImageSpec["yOrigin"] = self.TGAfile.read(2)
+        self.TGAImageSpec["imageWidth"] = self.TGAfile.read(2)
+        self.TGAImageSpec["imageHeight"] = self.TGAfile.read(2)
+        self.TGAImageSpec["pixelDepth"] = self.TGAfile.read(1)
+        self.TGAImageSpec["imageDescriptor"] = self.TGAfile.read(1)
 
     def printHeader(self):
-        print self.DTGAHeader
-        #print self.DTGAImageAndColorMapData
+        print self.TGAHeader
+        #print self.TGAImageAndColorMapData
 
     def readImageAndColorMapData(self):
-        self.DTGAImageAndColorMapData["imageID"] = self.TGAfile.read(self.DTGAHeader["IDLength"])
-        self.DTGAImageAndColorMapData["colorMapData"] = self.TGAfile.read(self.DTGAColorMapSpec["colorMapData"])
+        self.TGAImageAndColorMapData["imageID"] = self.TGAfile.read(self.TGAHeader["IDLength"])
+        self.TGAImageAndColorMapData["colorMapData"] = self.TGAfile.read(self.TGAColorMapSpec["colorMapData"])
 
     def readTGA(self):
         #self.readHeader()
@@ -105,11 +106,12 @@ class CTGA(object):
         self.readFooter(self.TGAfile)
 
     def readFooter(self, TGAfile):
-        TGAfile.seek(-18, os.SEEK_END)
-        self.DTGAFooter["extOffset"] = TGAfile.read(16)
-        print self.DTGAFooter["extOffset"]
-        """self.DTGAFooter["devAreaOffset"] = self.TGAfile.read(4)
-        self.DTGAFooter["signature"] = self.TGAfile.read(16)
-        self.DTGAFooter["reservedChar"] = self.TGAfile.read(1)
-        self.DTGAFooter["terminator"] = self.TGAfile.read(1)
-        """
+        TGAfile.seek(-self.footerLength, os.SEEK_END)
+        self.TGAFooter["extOffset"] = TGAfile.read(4)
+        self.TGAFooter["devAreaOffset"] = self.TGAfile.read(4)
+        self.TGAFooter["signature"] = self.TGAfile.read(16)
+        self.TGAFooter["reservedChar"] = self.TGAfile.read(1)
+        self.TGAFooter["terminator"] = self.TGAfile.read(1)
+        
+    #def printFooter(
+
